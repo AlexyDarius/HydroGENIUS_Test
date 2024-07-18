@@ -510,4 +510,121 @@ function computeModel() {
     <p>Total Reduction H2 GPU (Self-production): ${totalReductionH2GPUSelf.toFixed(2)} tons</p>
     <p>Total Reduction H2 GPU (SMR): ${totalReductionH2GPUSMR.toFixed(2)} tons</p>
 `;
+
+// Your existing computeModel code...
+
+    // After computing the electrolyserSpaceRequired
+    const finalElectrolyserSpaceRequired = electrolyserSpaceRequired[electrolyserSpaceRequired.length - 1];
+    console.log(finalElectrolyserSpaceRequired);
+    const sideLengthMeters = surfaceAreaToSideLength(finalElectrolyserSpaceRequired);
+
+    // Assume the center of the map as the location for the square (adjust as needed)
+    const center = map.getCenter();
+    const centerLat = center.lat;
+    const centerLng = center.lng;
+    createDraggableSquare(centerLat, centerLng, sideLengthMeters);
+
+    // Continue with the rest of your existing computeModel code...
+}
+
+// Initialize the map
+const map = L.map('map', {
+    center: [43.628270, 1.368770],
+    zoom: 15,
+    maxZoom: 21,  // Set the maximum zoom level
+    minZoom: 1    // Set the minimum zoom level
+});
+
+// Add OpenStreetMap tile layer
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 21,  // Set the maximum zoom level
+    minZoom: 1    // Set the minimum zoom level
+}).addTo(map);
+
+// Initialize the FeatureGroup to store editable layers
+const editableLayers = new L.FeatureGroup();
+map.addLayer(editableLayers);
+
+// Function to convert surface area (m²) to side length (meters)
+function surfaceAreaToSideLength(surfaceArea) {
+    return Math.sqrt(surfaceArea);
+}
+
+// Function to calculate the surface area from the side length in meters
+function calculateSurfaceArea(sideLengthMeters) {
+    return sideLengthMeters * sideLengthMeters;
+}
+
+// Function to convert meters to degrees (approximation)
+function metersToDegrees(meters) {
+    const degrees = meters / 111000;
+    return degrees;
+}
+
+// Initialize the draw control and pass it the FeatureGroup of editable layers
+const drawControl = new L.Control.Draw({
+    edit: {
+        featureGroup: editableLayers,
+        edit: {
+            selectedPathOptions: {
+                maintainAspectRatio: true,
+                rotate: true,
+                transform: true
+            }
+        },
+        remove: true
+    },
+    draw: false
+});
+map.addControl(drawControl);
+
+// Function to create a draggable square of the given side length at the specified center
+function createDraggableSquare(centerLat, centerLng, sideLengthMeters) {
+    const halfSideDegrees = metersToDegrees(sideLengthMeters / 2);
+    const southWest = L.latLng(centerLat - halfSideDegrees, centerLng - halfSideDegrees);
+    const northEast = L.latLng(centerLat + halfSideDegrees, centerLng + halfSideDegrees);
+    const bounds = L.latLngBounds(southWest, northEast);
+
+    const rectangle = L.rectangle(bounds, {
+        color: "#0088ff",
+        weight: 1,
+        interactive: true,
+        transform: true
+    });
+
+    editableLayers.addLayer(rectangle);
+
+    const center = bounds.getCenter();
+    const surfaceArea = calculateSurfaceArea(sideLengthMeters);
+    const label = L.marker(center, {
+        icon: L.divIcon({
+            className: 'label',
+            html: `<div style="transform: translate(-50%, -50%); background-color: white; padding: 2px;">Electrolysers: ${surfaceArea.toFixed(2)} m²</div>`,
+            iconSize: [150, 40]
+        }),
+        //interactive: false  // Make the label non-interactive
+    }).addTo(editableLayers);
+
+    rectangle.on('edit', function(e) {
+        const bounds = e.target.getBounds();
+        label.setLatLng(bounds.getCenter());
+    });
+
+    rectangle.on('drag', function(e) {
+        const bounds = e.target.getBounds();
+        label.setLatLng(bounds.getCenter());
+    });
+
+    rectangle.on('rotatestart', function(e) {
+        console.log('Rotation started:', e);
+    });
+
+    rectangle.on('rotate', function(e) {
+        console.log('Rotating:', e);
+    });
+
+    rectangle.on('rotateend', function(e) {
+        console.log('Rotation ended:', e);
+    });
 }
