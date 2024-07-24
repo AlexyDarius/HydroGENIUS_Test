@@ -471,39 +471,39 @@ function computeModel() {
     renderCashFlowChart(years, productionInfrastructure, h2Fleet);
 
      // Display results in the table
-        const tableBody = document.getElementById('resultsTableBody');
-        tableBody.innerHTML = '';
+    const tableBody = document.getElementById('resultsTableBody');
+    tableBody.innerHTML = '';
 
-        for (let i = 0; i < years.length; i++) {
-            const row = document.createElement('tr');
-            const yearCell = document.createElement('td');
-            yearCell.textContent = years[i];
-            row.appendChild(yearCell);
+    const formatNumber = (number) => {
+        let absNumber = Math.abs(number);
+        let formattedNumber = absNumber.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        return number < 0 ? `(-) $${formattedNumber}` : `$${formattedNumber}`;
+    };
 
-            const formatNumber = (number) => {
-                let absNumber = Math.abs(number);
-                let formattedNumber = absNumber.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-                return number < 0 ? `(-) $${formattedNumber}` : `$${formattedNumber}`;
-            };
+    for (let i = 0; i < years.length; i++) {
+        const row = document.createElement('tr');
+        const yearCell = document.createElement('td');
+        yearCell.textContent = years[i];
+        row.appendChild(yearCell);
 
-            const productionInfrastructureCell = document.createElement('td');
-            productionInfrastructureCell.textContent = formatNumber(productionInfrastructure[i]);
-            row.appendChild(productionInfrastructureCell);
+        const productionInfrastructureCell = document.createElement('td');
+        productionInfrastructureCell.textContent = formatNumber(productionInfrastructure[i]);
+        row.appendChild(productionInfrastructureCell);
 
-            const h2FleetCell = document.createElement('td');
-            h2FleetCell.textContent = formatNumber(h2Fleet[i]);
-            row.appendChild(h2FleetCell);
+        const h2FleetCell = document.createElement('td');
+        h2FleetCell.textContent = formatNumber(h2Fleet[i]);
+        row.appendChild(h2FleetCell);
 
-            const totalCashFlowCell = document.createElement('td');
-            totalCashFlowCell.textContent = formatNumber(totalCashFlow[i]);
-            row.appendChild(totalCashFlowCell);
+        const totalCashFlowCell = document.createElement('td');
+        totalCashFlowCell.textContent = formatNumber(totalCashFlow[i]);
+        row.appendChild(totalCashFlowCell);
 
-            tableBody.appendChild(row);
-        }
+        tableBody.appendChild(row);
+    }
 
-        // Display NPV value
-        const npvElement = document.getElementById('npvValue');
-        npvElement.textContent = `NPV Value: ${formatNumber(npvValue)}`;
+    // Display NPV value
+    const npvElement = document.getElementById('npvValue');
+    npvElement.textContent = `NPV Value: ${formatNumber(npvValue)}`;
 
     const totalDieselEmissions = dieselEmissions.reduce((sum, value) => sum + value, 0);
     const totalReductionH2GPUSelf = reductionH2GPUSelf.reduce((sum, value) => sum + value, 0);
