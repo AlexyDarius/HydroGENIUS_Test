@@ -471,33 +471,39 @@ function computeModel() {
     renderCashFlowChart(years, productionInfrastructure, h2Fleet);
 
      // Display results in the table
-     const tableBody = document.getElementById('resultsTableBody');
-     tableBody.innerHTML = '';
- 
-     for (let i = 0; i < years.length; i++) {
-        const row = document.createElement('tr');
-        const yearCell = document.createElement('td');
-        yearCell.textContent = years[i];
-        row.appendChild(yearCell);
+        const tableBody = document.getElementById('resultsTableBody');
+        tableBody.innerHTML = '';
 
-        const productionInfrastructureCell = document.createElement('td');
-        productionInfrastructureCell.textContent = `$${productionInfrastructure[i].toFixed(2)}`;
-        row.appendChild(productionInfrastructureCell);
+        for (let i = 0; i < years.length; i++) {
+            const row = document.createElement('tr');
+            const yearCell = document.createElement('td');
+            yearCell.textContent = years[i];
+            row.appendChild(yearCell);
 
-        const h2FleetCell = document.createElement('td');
-        h2FleetCell.textContent = `$${h2Fleet[i].toFixed(2)}`;
-        row.appendChild(h2FleetCell);
+            const formatNumber = (number) => {
+                let absNumber = Math.abs(number);
+                let formattedNumber = absNumber.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                return number < 0 ? `(-) $${formattedNumber}` : `$${formattedNumber}`;
+            };
 
-        const totalCashFlowCell = document.createElement('td');
-        totalCashFlowCell.textContent = `$${totalCashFlow[i].toFixed(2)}`;
-        row.appendChild(totalCashFlowCell);
+            const productionInfrastructureCell = document.createElement('td');
+            productionInfrastructureCell.textContent = formatNumber(productionInfrastructure[i]);
+            row.appendChild(productionInfrastructureCell);
 
-        tableBody.appendChild(row);
-    }
+            const h2FleetCell = document.createElement('td');
+            h2FleetCell.textContent = formatNumber(h2Fleet[i]);
+            row.appendChild(h2FleetCell);
 
-    // Display NPV value
-    const npvElement = document.getElementById('npvValue');
-    npvElement.textContent = `NPV Value: $${npvValue.toFixed(2)}`;
+            const totalCashFlowCell = document.createElement('td');
+            totalCashFlowCell.textContent = formatNumber(totalCashFlow[i]);
+            row.appendChild(totalCashFlowCell);
+
+            tableBody.appendChild(row);
+        }
+
+        // Display NPV value
+        const npvElement = document.getElementById('npvValue');
+        npvElement.textContent = `NPV Value: ${formatNumber(npvValue)}`;
 
     const totalDieselEmissions = dieselEmissions.reduce((sum, value) => sum + value, 0);
     const totalReductionH2GPUSelf = reductionH2GPUSelf.reduce((sum, value) => sum + value, 0);
