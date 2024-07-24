@@ -480,24 +480,29 @@ function computeModel() {
         return number < 0 ? `(-) $${formattedNumber}` : `$${formattedNumber}`;
     };
 
+    const fixedWidth = '150px'; // Define the fixed width for the columns
+
     for (let i = 0; i < years.length; i++) {
         const row = document.createElement('tr');
         const yearCell = document.createElement('td');
         yearCell.textContent = years[i];
         row.appendChild(yearCell);
-
+    
         const productionInfrastructureCell = document.createElement('td');
         productionInfrastructureCell.textContent = formatNumber(productionInfrastructure[i]);
+        productionInfrastructureCell.style.width = fixedWidth;
         row.appendChild(productionInfrastructureCell);
-
+    
         const h2FleetCell = document.createElement('td');
         h2FleetCell.textContent = formatNumber(h2Fleet[i]);
+        h2FleetCell.style.width = fixedWidth;
         row.appendChild(h2FleetCell);
-
+    
         const totalCashFlowCell = document.createElement('td');
         totalCashFlowCell.textContent = formatNumber(totalCashFlow[i]);
+        totalCashFlowCell.style.width = fixedWidth;
         row.appendChild(totalCashFlowCell);
-
+    
         tableBody.appendChild(row);
     }
 
