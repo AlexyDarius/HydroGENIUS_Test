@@ -471,7 +471,7 @@ function computeModel() {
     renderCashFlowChart(years, productionInfrastructure, h2Fleet);
 
      // Display results in the table
-    const tableBody = document.getElementById('resultsTableBody');
+     const tableBody = document.getElementById('resultsTableBody');
     tableBody.innerHTML = '';
 
     const formatNumber = (number) => {
@@ -508,7 +508,7 @@ function computeModel() {
 
     // Display NPV value
     const npvElement = document.getElementById('npvValue');
-    npvElement.textContent = `NPV Value: ${formatNumber(npvValue)}`;
+    npvElement.textContent = `NPV Value: $${npvValue.toFixed(2)}`;
 
     const totalDieselEmissions = dieselEmissions.reduce((sum, value) => sum + value, 0);
     const totalReductionH2GPUSelf = reductionH2GPUSelf.reduce((sum, value) => sum + value, 0);
